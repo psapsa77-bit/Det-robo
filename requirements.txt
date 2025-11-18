@@ -1,2 +1,15 @@
-flask==3.0.0
-selenium==4.16.0
+# DET Robot - Dependências Python
+#
+# Servidor Web
+flask>=3.0.0
+
+# Automação de navegador
+selenium>=4.15.0
+
+# Utilitários (instalados automaticamente como dependências)
+# - werkzeug (Flask)
+# - jinja2 (Flask)
+# - click (Flask)
+# - itsdangerous (Flask)
+# - urllib3 (Selenium)
+# - certifi (Selenium)

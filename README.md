@@ -29,13 +29,25 @@ Antes de começar, você precisa ter instalado:
 
 ### 🪟 Windows
 
-1. **Duplo-clique em `install.bat`** → Instala tudo automaticamente
-2. **Duplo-clique em `run.bat`** → Inicia o DET Robot
+**Opção 1: Instalador Completo (Recomendado)**
+1. **Duplo-clique em `INSTALAR_WINDOWS.bat`** → Instala com verificações completas
+2. **Duplo-clique em `ABRIR.bat`** → Inicia o DET Robot
+
+**Opção 2: Instalador Rápido**
+1. **Duplo-clique em `INSTALAR_SIMPLES.bat`** → Instalação rápida sem verificações
+2. **Duplo-clique em `VERIFICAR.bat`** → (Opcional) Testa a instalação
+3. **Duplo-clique em `ABRIR.bat`** → Inicia o DET Robot
 
 ### 🐧 Linux/Mac
 
-1. **Execute `bash install.sh`** → Instala tudo
-2. **Execute `bash run.sh`** → Inicia o DET Robot
+**Opção 1: Instalador Completo (Recomendado)**
+1. **Execute `bash INSTALAR_LINUX.sh`** → Instala com verificações completas
+2. **Execute `bash ABRIR.sh`** → Inicia o DET Robot
+
+**Opção 2: Instalador Rápido**
+1. **Execute `bash INSTALAR_SIMPLES.sh`** → Instalação rápida sem verificações
+2. **Execute `bash VERIFICAR.sh`** → (Opcional) Testa a instalação
+3. **Execute `bash ABRIR.sh`** → Inicia o DET Robot
 
 **Pronto!** O sistema abrirá automaticamente em http://localhost:5000
 
@@ -45,7 +57,7 @@ Antes de começar, você precisa ter instalado:
 
 ### 1. Fluxo Básico
 
-1. **Execute `run.bat` (Windows) ou `bash run.sh` (Linux/Mac)**
+1. **Execute `ABRIR.bat` (Windows) ou `bash ABRIR.sh` (Linux/Mac)**
 2. **Clique em "Iniciar Sistema"** (ou digite: "inicie o navegador")
 3. **Clique em "Acessar DET"** (ou digite: "acesse o DET")
 4. **Faça login manualmente** no portal DET
@@ -127,12 +139,27 @@ Exemplos clicáveis estão disponíveis para facilitar o uso.
 ```
 Det-robo/
 │
-├── run.bat / run.sh           # Scripts de execução
-├── install.bat / install.sh   # Scripts de instalação
+├── INSTALAR_WINDOWS.bat       # Instalador completo Windows
+├── INSTALAR_LINUX.sh          # Instalador completo Linux/Mac
+├── INSTALAR_SIMPLES.bat       # Instalador rápido Windows
+├── INSTALAR_SIMPLES.sh        # Instalador rápido Linux/Mac
+├── ABRIR.bat                  # Executar no Windows
+├── ABRIR.sh                   # Executar no Linux/Mac
+├── VERIFICAR.bat              # Testar instalação Windows
+├── VERIFICAR.sh               # Testar instalação Linux/Mac
 │
-├── app.py                     # Servidor Flask + API
-├── browser_controller.py      # Controle Selenium avançado
-├── det_automation.py          # Automação específica DET
+├── app.py                     # Servidor Flask + API REST
+├── requirements.txt           # Dependências Python
+│
+├── det_robot/                 # Pacote modular principal
+│   ├── __init__.py           # Exports do pacote
+│   ├── config.py             # Configurações centralizadas
+│   ├── automation.py         # Automação DET com context manager
+│   ├── extractor.py          # Extração de dados estruturados
+│   └── reporter.py           # Geração de relatórios HTML/JSON
+│
+├── browser_controller.py      # Controle Selenium avançado (legado)
+├── det_automation.py          # Automação DET (legado)
 ├── command_processor.py       # Processamento de linguagem natural
 │
 ├── templates/
@@ -142,7 +169,12 @@ Det-robo/
 │   ├── style.css             # Design moderno e responsivo
 │   └── script.js             # Lógica da interface
 │
-└── screenshots/              # Screenshots gerados
+├── docs/
+│   └── COMO_USAR.md          # Guia completo em português
+│
+├── exports/                   # Relatórios gerados (HTML/JSON)
+├── logs/                      # Logs do sistema
+└── screenshots/               # Screenshots com timestamp
 ```
 
 ---
@@ -166,6 +198,15 @@ Det-robo/
 4. **Use comandos específicos** para melhor precisão
 
 ### Resolução de Problemas:
+
+**"Falha ao instalar dependências"**
+- Verifique sua conexão com a internet
+- Use o instalador simples: `INSTALAR_SIMPLES.bat` ou `INSTALAR_SIMPLES.sh`
+- Tente manualmente: `pip install flask selenium`
+
+**"Módulo det_robot não encontrado"**
+- Execute `VERIFICAR.bat` ou `bash VERIFICAR.sh` para diagnóstico
+- Reinstale com `INSTALAR_SIMPLES`
 
 **"Elemento não encontrado"**
 - O portal DET pode estar lento
@@ -204,10 +245,11 @@ Det-robo/
 
 Se encontrar problemas:
 
-1. Verifique se Python e Chrome estão instalados
-2. Execute `install.bat` / `install.sh` novamente
-3. Verifique se está na versão mais recente
-4. Consulte os logs de erro no terminal
+1. **Teste a instalação**: Execute `VERIFICAR.bat` (Windows) ou `bash VERIFICAR.sh` (Linux/Mac)
+2. **Verifique pré-requisitos**: Python 3.7+ e Google Chrome instalados
+3. **Reinstale**: Use `INSTALAR_SIMPLES` para instalação rápida
+4. **Logs**: Consulte a pasta `logs/` para detalhes de erro
+5. **Documentação**: Leia `docs/COMO_USAR.md` para instruções completas
 
 ---
 
@@ -221,8 +263,18 @@ Código aberto sob licença MIT.
 
 Desenvolvido com foco em **produtividade** e **facilidade de uso** para profissionais que trabalham com o portal DET.
 
-**Versão**: 1.0
+**Versão**: 2.0 (Arquitetura Modular)
 **Status**: Estável e Funcional
+
+### Novidades v2.0:
+- ✨ Arquitetura modular profissional (`det_robot/` package)
+- 📊 Extração de dados estruturados (mensagens, perfis, dashboard)
+- 📄 Geração de relatórios HTML e JSON
+- 🔧 Scripts de instalação melhorados (completo e simples)
+- ✅ Script de verificação de instalação
+- 📝 Documentação completa em português
+- 🔒 Logging estruturado
+- ⚙️ Configuração centralizada com suporte a variáveis de ambiente
 
 ---
 

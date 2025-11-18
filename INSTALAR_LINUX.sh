@@ -94,26 +94,41 @@ echo ""
 echo -e "${BLUE}[6/6] Instalando dependências...${NC}"
 echo ""
 echo "Atualizando pip..."
-pip install --upgrade pip --quiet
+pip install --upgrade pip
 
+echo ""
 echo "Instalando pacotes necessários..."
 echo "  - Flask (servidor web)"
 echo "  - Selenium (automação)"
 echo "  - Outras dependências..."
 echo ""
 
-pip install -r requirements.txt
+# Tenta instalar do requirements.txt com output verbose
+echo "Executando: pip install -r requirements.txt"
+echo ""
+pip install -r requirements.txt -v
 
 if [ $? -ne 0 ]; then
     echo ""
-    echo -e "${RED}[ERRO] Falha ao instalar dependências!${NC}"
+    echo -e "${RED}[ERRO] Falha ao instalar dependências do requirements.txt!${NC}"
     echo ""
-    echo "Tentando instalação individual..."
-    pip install flask
-    pip install selenium
+    echo "Tentando instalação individual com versões flexíveis..."
 
-    if [ $? -ne 0 ]; then
+    pip install "flask>=3.0.0" -v
+    FLASK_STATUS=$?
+
+    pip install "selenium>=4.15.0" -v
+    SELENIUM_STATUS=$?
+
+    if [ $FLASK_STATUS -ne 0 ] || [ $SELENIUM_STATUS -ne 0 ]; then
+        echo ""
         echo -e "${RED}[ERRO] Falha crítica na instalação!${NC}"
+        echo ""
+        echo "Detalhes do erro acima. Possíveis soluções:"
+        echo "  1. Verifique sua conexão com a internet"
+        echo "  2. Execute: pip3 install --upgrade pip setuptools wheel"
+        echo "  3. Tente instalar manualmente: pip3 install flask selenium"
+        echo ""
         exit 1
     fi
 fi

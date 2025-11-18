@@ -97,26 +97,55 @@ REM Instalar dependencias
 echo [6/6] Instalando dependencias...
 echo.
 echo Atualizando pip...
-python -m pip install --upgrade pip --quiet
+python -m pip install --upgrade pip
 
+echo.
 echo Instalando pacotes necessarios...
 echo   - Flask (servidor web)
 echo   - Selenium (automacao)
 echo   - Outras dependencias...
 echo.
 
-pip install -r requirements.txt
+REM Tenta instalar do requirements.txt com output verbose
+echo Executando: pip install -r requirements.txt
+echo.
+pip install -r requirements.txt -v
 
 if errorlevel 1 (
     echo.
-    echo [ERRO] Falha ao instalar dependencias!
+    echo [ERRO] Falha ao instalar dependencias do requirements.txt!
     echo.
-    echo Tentando instalacao individual...
-    pip install flask
-    pip install selenium
+    echo Tentando instalacao individual com versoes flexiveis...
+    echo.
 
-    if errorlevel 1 (
-        echo [ERRO] Falha critica na instalacao!
+    pip install "flask>=3.0.0" -v
+    set FLASK_STATUS=%errorlevel%
+
+    pip install "selenium>=4.15.0" -v
+    set SELENIUM_STATUS=%errorlevel%
+
+    if %FLASK_STATUS% neq 0 (
+        echo.
+        echo [ERRO] Falha ao instalar Flask!
+        echo.
+        echo Detalhes do erro acima. Possiveis solucoes:
+        echo   1. Verifique sua conexao com a internet
+        echo   2. Execute: pip install --upgrade pip setuptools wheel
+        echo   3. Tente instalar manualmente: pip install flask selenium
+        echo.
+        pause
+        exit /b 1
+    )
+
+    if %SELENIUM_STATUS% neq 0 (
+        echo.
+        echo [ERRO] Falha ao instalar Selenium!
+        echo.
+        echo Detalhes do erro acima. Possiveis solucoes:
+        echo   1. Verifique sua conexao com a internet
+        echo   2. Execute: pip install --upgrade pip setuptools wheel
+        echo   3. Tente instalar manualmente: pip install flask selenium
+        echo.
         pause
         exit /b 1
     )
