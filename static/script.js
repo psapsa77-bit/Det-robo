@@ -159,6 +159,56 @@ function handleUrlKeypress(event) {
     }
 }
 
+// Funções de comandos em linguagem natural
+async function processCommand() {
+    const commandInput = document.getElementById('commandInput');
+    const command = commandInput.value.trim();
+
+    if (!command) {
+        showMessage('Por favor, digite um comando', 'error');
+        return;
+    }
+
+    showMessage(`Executando: "${command}"`, 'info');
+
+    const result = await apiCall('/api/command/process', 'POST', { command: command });
+
+    if (result.success) {
+        showMessage(`✓ ${result.message}`, 'success');
+        commandInput.value = ''; // Limpa o campo após sucesso
+
+        // Atualiza status se necessário
+        if (['navigate', 'search', 'back', 'forward', 'start'].includes(result.action)) {
+            setTimeout(updateStatus, 1000);
+        }
+
+        // Atualiza status display se parou o navegador
+        if (result.action === 'stop') {
+            updateStatusDisplay(false, null, null);
+        }
+    } else {
+        showMessage(`✗ ${result.message}`, 'error');
+    }
+}
+
+function handleCommandKeypress(event) {
+    if (event.key === 'Enter') {
+        processCommand();
+    }
+}
+
+function setCommand(command) {
+    const commandInput = document.getElementById('commandInput');
+    commandInput.value = command;
+    commandInput.focus();
+
+    // Anima o campo
+    commandInput.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+        commandInput.style.transform = 'scale(1)';
+    }, 200);
+}
+
 // Atualiza status periodicamente
 setInterval(updateStatus, 5000);
 

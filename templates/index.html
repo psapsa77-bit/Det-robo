@@ -23,6 +23,31 @@
             </div>
         </div>
 
+        <div class="command-panel">
+            <section class="command-section">
+                <h2>🎤 Comandos em Linguagem Natural</h2>
+                <p class="command-help">Digite o que você quer que o robô faça!</p>
+                <div class="command-input-group">
+                    <input
+                        type="text"
+                        id="commandInput"
+                        placeholder="Ex: abra google.com, pesquise python, tire um screenshot..."
+                        onkeypress="handleCommandKeypress(event)"
+                    >
+                    <button class="btn btn-magic" onclick="processCommand()">
+                        ✨ Executar
+                    </button>
+                </div>
+                <div class="command-examples">
+                    <span class="example-label">Exemplos:</span>
+                    <button class="example-btn" onclick="setCommand('abra youtube.com')">abra youtube.com</button>
+                    <button class="example-btn" onclick="setCommand('pesquise receitas de bolo')">pesquise receitas de bolo</button>
+                    <button class="example-btn" onclick="setCommand('tire um screenshot')">tire um screenshot</button>
+                    <button class="example-btn" onclick="setCommand('volte')">volte</button>
+                </div>
+            </section>
+        </div>
+
         <div class="control-panel">
             <section class="control-section">
                 <h2>Controle do Navegador</h2>

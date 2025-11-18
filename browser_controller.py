@@ -85,6 +85,24 @@ class BrowserController:
         self.driver.save_screenshot(filename)
         return filename
 
+    def scroll(self, direction):
+        """Rola a página na direção especificada"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        scroll_scripts = {
+            'down': 'window.scrollBy(0, 500);',
+            'up': 'window.scrollBy(0, -500);',
+            'top': 'window.scrollTo(0, 0);',
+            'bottom': 'window.scrollTo(0, document.body.scrollHeight);'
+        }
+
+        script = scroll_scripts.get(direction)
+        if script:
+            self.driver.execute_script(script)
+        else:
+            raise Exception(f"Direção de scroll inválida: {direction}")
+
     def get_status(self):
         """Retorna o status atual do navegador"""
         if not self.is_running or not self.driver:

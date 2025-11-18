@@ -1,11 +1,12 @@
 # 🤖 Robô Simples - Controle de Navegador
 
-Um robô simples e intuitivo para controlar seu navegador web de forma fácil através de uma interface web moderna.
+Um robô simples e intuitivo para controlar seu navegador web de forma fácil através de uma interface web moderna com **comandos em linguagem natural**!
 
 ## 📋 Descrição
 
 Este projeto oferece uma interface web intuitiva para controlar o Google Chrome através do Selenium. Você pode:
 
+- 🎤 **Controlar por comandos em português** (ex: "abra google.com", "pesquise python")
 - ✅ Iniciar e fechar o navegador
 - 🌐 Navegar para qualquer URL
 - ⬅️ Voltar e avançar no histórico
@@ -14,6 +15,16 @@ Este projeto oferece uma interface web intuitiva para controlar o Google Chrome 
 - 🎯 Acessar sites populares com um clique
 
 ## 🚀 Funcionalidades
+
+### 🎤 Comandos em Linguagem Natural (NOVO!)
+Digite o que você quer em português e o robô executa! Exemplos:
+- `"abra youtube.com"` - Navega para o YouTube
+- `"pesquise receitas de bolo"` - Faz uma busca no Google
+- `"tire um screenshot"` - Captura a tela
+- `"volte"` - Volta para a página anterior
+- `"atualize a página"` - Atualiza a página atual
+- `"role para baixo"` - Rola a página
+- `"feche o navegador"` - Fecha o navegador
 
 ### Controle do Navegador
 - Iniciar o Google Chrome nativo
@@ -25,6 +36,7 @@ Este projeto oferece uma interface web intuitiva para controlar o Google Chrome 
 - Botões de voltar/avançar
 - Atualização de página
 - Captura de screenshots
+- Scroll automático (cima, baixo, topo, fim)
 
 ### Atalhos Rápidos
 - Google
@@ -84,6 +96,15 @@ http://localhost:5000
 
 ### 3. Use a interface
 
+#### Modo Recomendado: Comandos em Linguagem Natural 🎤
+1. **Iniciar**: Digite `"inicie o navegador"` e pressione Enter (ou clique em Executar)
+2. **Navegar**: Digite `"abra google.com"` ou `"vá para youtube.com"`
+3. **Pesquisar**: Digite `"pesquise receitas de bolo"` ou `"busque python tutorial"`
+4. **Controlar**: Digite `"volte"`, `"avance"`, `"atualize a página"`
+5. **Screenshot**: Digite `"tire um screenshot"`
+6. **Fechar**: Digite `"feche o navegador"`
+
+#### Modo Tradicional: Botões
 1. **Iniciar Navegador**: Clique em "▶️ Iniciar Navegador"
 2. **Navegar**: Digite uma URL no campo de texto e clique em "🌐 Ir" ou pressione Enter
 3. **Usar Atalhos**: Clique em um dos botões de atalho (Google, YouTube, etc.)
@@ -98,6 +119,7 @@ Det-robo/
 │
 ├── app.py                  # Aplicação Flask principal
 ├── browser_controller.py   # Controlador do navegador (Selenium)
+├── command_processor.py    # Processador de comandos em linguagem natural
 ├── requirements.txt        # Dependências do projeto
 ├── README.md              # Este arquivo
 │
@@ -122,6 +144,10 @@ Det-robo/
 
 O robô expõe os seguintes endpoints REST:
 
+### Comandos em Linguagem Natural
+- `POST /api/command/process` - Processa um comando em linguagem natural (português)
+
+### Controle do Navegador
 - `POST /api/browser/start` - Inicia o navegador
 - `POST /api/browser/stop` - Fecha o navegador
 - `POST /api/browser/navigate` - Navega para uma URL
