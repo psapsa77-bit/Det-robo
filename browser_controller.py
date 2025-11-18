@@ -4,8 +4,13 @@ Controlador do Navegador usando Selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from datetime import datetime
 import os
+import time
 
 
 class BrowserController:
@@ -124,3 +129,126 @@ class BrowserController:
                 'url': None,
                 'title': None
             }
+
+    # Métodos avançados para automação
+    def wait_for_element(self, selector, by=By.CSS_SELECTOR, timeout=10):
+        """Espera um elemento aparecer na página"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        try:
+            element = WebDriverWait(self.driver, timeout).until(
+                EC.presence_of_element_located((by, selector))
+            )
+            return element
+        except TimeoutException:
+            raise Exception(f"Elemento '{selector}' não encontrado após {timeout} segundos")
+
+    def wait_for_clickable(self, selector, by=By.CSS_SELECTOR, timeout=10):
+        """Espera um elemento estar clicável"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        try:
+            element = WebDriverWait(self.driver, timeout).until(
+                EC.element_to_be_clickable((by, selector))
+            )
+            return element
+        except TimeoutException:
+            raise Exception(f"Elemento '{selector}' não está clicável após {timeout} segundos")
+
+    def find_element(self, selector, by=By.CSS_SELECTOR):
+        """Encontra um elemento na página"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        try:
+            return self.driver.find_element(by, selector)
+        except NoSuchElementException:
+            raise Exception(f"Elemento '{selector}' não encontrado")
+
+    def find_elements(self, selector, by=By.CSS_SELECTOR):
+        """Encontra múltiplos elementos na página"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        return self.driver.find_elements(by, selector)
+
+    def click_element(self, selector, by=By.CSS_SELECTOR, wait=True):
+        """Clica em um elemento"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        try:
+            if wait:
+                element = self.wait_for_clickable(selector, by)
+            else:
+                element = self.find_element(selector, by)
+
+            element.click()
+            time.sleep(0.5)  # Pequena pausa após o clique
+        except Exception as e:
+            raise Exception(f"Erro ao clicar no elemento '{selector}': {str(e)}")
+
+    def type_text(self, selector, text, by=By.CSS_SELECTOR, clear_first=True):
+        """Digite texto em um campo"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        try:
+            element = self.wait_for_element(selector, by)
+            if clear_first:
+                element.clear()
+            element.send_keys(text)
+            time.sleep(0.3)
+        except Exception as e:
+            raise Exception(f"Erro ao digitar no elemento '{selector}': {str(e)}")
+
+    def get_text(self, selector, by=By.CSS_SELECTOR):
+        """Obtém o texto de um elemento"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        try:
+            element = self.wait_for_element(selector, by)
+            return element.text
+        except Exception as e:
+            raise Exception(f"Erro ao obter texto do elemento '{selector}': {str(e)}")
+
+    def element_exists(self, selector, by=By.CSS_SELECTOR):
+        """Verifica se um elemento existe"""
+        if not self.is_running:
+            return False
+
+        try:
+            self.driver.find_element(by, selector)
+            return True
+        except NoSuchElementException:
+            return False
+
+    def wait_for_page_load(self, timeout=10):
+        """Espera a página carregar completamente"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        WebDriverWait(self.driver, timeout).until(
+            lambda driver: driver.execute_script("return document.readyState") == "complete"
+        )
+
+    def execute_script(self, script):
+        """Executa JavaScript na página"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        return self.driver.execute_script(script)
+
+    def get_attribute(self, selector, attribute, by=By.CSS_SELECTOR):
+        """Obtém um atributo de um elemento"""
+        if not self.is_running:
+            raise Exception("Navegador não está em execução.")
+
+        try:
+            element = self.find_element(selector, by)
+            return element.get_attribute(attribute)
+        except Exception as e:
+            raise Exception(f"Erro ao obter atributo '{attribute}' do elemento '{selector}': {str(e)}")

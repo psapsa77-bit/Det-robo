@@ -1,12 +1,13 @@
 # 🤖 Robô Simples - Controle de Navegador
 
-Um robô simples e intuitivo para controlar seu navegador web de forma fácil através de uma interface web moderna com **comandos em linguagem natural**!
+Um robô simples e intuitivo para controlar seu navegador web de forma fácil através de uma interface web moderna com **comandos em linguagem natural** e **automação DET**!
 
 ## 📋 Descrição
 
 Este projeto oferece uma interface web intuitiva para controlar o Google Chrome através do Selenium. Você pode:
 
 - 🎤 **Controlar por comandos em português** (ex: "abra google.com", "pesquise python")
+- 🏢 **Automatizar o DET** - Domicílio Eletrônico Trabalhista (trocar perfis, ver mensagens)
 - ✅ Iniciar e fechar o navegador
 - 🌐 Navegar para qualquer URL
 - ⬅️ Voltar e avançar no histórico
@@ -16,7 +17,7 @@ Este projeto oferece uma interface web intuitiva para controlar o Google Chrome 
 
 ## 🚀 Funcionalidades
 
-### 🎤 Comandos em Linguagem Natural (NOVO!)
+### 🎤 Comandos em Linguagem Natural
 Digite o que você quer em português e o robô executa! Exemplos:
 - `"abra youtube.com"` - Navega para o YouTube
 - `"pesquise receitas de bolo"` - Faz uma busca no Google
@@ -25,6 +26,17 @@ Digite o que você quer em português e o robô executa! Exemplos:
 - `"atualize a página"` - Atualiza a página atual
 - `"role para baixo"` - Rola a página
 - `"feche o navegador"` - Fecha o navegador
+
+### 🏢 Automação DET - Domicílio Eletrônico Trabalhista (NOVO!)
+Comandos específicos para automatizar o portal DET:
+- `"acesse o DET"` ou `"abra o domicílio eletrônico"` - Acessa o portal DET
+- `"trocar perfil"` ou `"mudar empresa"` - Abre o seletor de perfil/empresa
+- `"trocar perfil para [nome]"` - Troca para empresa específica por nome
+- `"trocar perfil para [CNPJ]"` - Troca para empresa específica por CNPJ
+- `"verificar mensagens"` - Verifica quantas mensagens não lidas
+- `"acessar mensagens"` - Vai para a área de mensagens
+- `"listar mensagens"` - Lista as mensagens não lidas
+- `"abrir primeira mensagem"` - Abre a primeira mensagem não lida
 
 ### Controle do Navegador
 - Iniciar o Google Chrome nativo
@@ -104,6 +116,16 @@ http://localhost:5000
 5. **Screenshot**: Digite `"tire um screenshot"`
 6. **Fechar**: Digite `"feche o navegador"`
 
+#### Uso do DET - Domicílio Eletrônico Trabalhista 🏢
+1. **Acessar DET**: Digite `"acesse o DET"` ou clique no exemplo "acesse o DET"
+2. **Fazer login**: Faça login manualmente no portal (o robô aguarda)
+3. **Trocar empresa**: Digite `"trocar perfil"` ou `"trocar perfil para [nome da empresa]"`
+4. **Ver mensagens**: Digite `"verificar mensagens"` para ver quantas não lidas
+5. **Listar mensagens**: Digite `"listar mensagens"` para ver detalhes
+6. **Abrir mensagem**: Digite `"abrir primeira mensagem"` para ler
+
+**Dica**: Os comandos DET funcionam melhor após fazer login manualmente no portal.
+
 #### Modo Tradicional: Botões
 1. **Iniciar Navegador**: Clique em "▶️ Iniciar Navegador"
 2. **Navegar**: Digite uma URL no campo de texto e clique em "🌐 Ir" ou pressione Enter
@@ -120,6 +142,7 @@ Det-robo/
 ├── app.py                  # Aplicação Flask principal
 ├── browser_controller.py   # Controlador do navegador (Selenium)
 ├── command_processor.py    # Processador de comandos em linguagem natural
+├── det_automation.py       # Automação específica para DET
 ├── requirements.txt        # Dependências do projeto
 ├── README.md              # Este arquivo
 │

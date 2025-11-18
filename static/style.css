@@ -171,6 +171,23 @@ header p {
     transform: translateY(-1px);
 }
 
+.det-examples {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.det-btn {
+    background: rgba(255, 215, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.6);
+    font-weight: 600;
+}
+
+.det-btn:hover {
+    background: rgba(255, 215, 0, 0.5);
+    border-color: rgba(255, 215, 0, 0.8);
+}
+
 .control-panel {
     padding: 30px;
 }

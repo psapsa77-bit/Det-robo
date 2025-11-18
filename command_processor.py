@@ -9,6 +9,14 @@ class CommandProcessor:
 
     def __init__(self):
         self.patterns = [
+            # DET - Domicílio Eletrônico Trabalhista (prioridade alta - vem primeiro)
+            (r'(?:abr[ae]|acess[ae]|v[áa] para|entre no?)\s+(?:o\s+)?(?:det|domicilio eletr[ôo]nico)', 'det_acessar'),
+            (r'(?:troc[ae]|trocar|mud[ae]|mudar|alter[ae]|alterar)\s+(?:o\s+)?(?:perfil|empresa)(?:\s+para)?\s*(.+)?', 'det_trocar_perfil'),
+            (r'(?:verific[ae]|verificar|checar|conferir)\s+(?:as\s+)?mensagens(?:\s+n[ãa]o\s+lidas?)?', 'det_verificar_mensagens'),
+            (r'(?:acess[ae]|abr[ae]|v[áa] para)\s+(?:as\s+)?mensagens', 'det_acessar_mensagens'),
+            (r'(?:list[ae]|listar|mostre?|exib[ae])\s+(?:as\s+)?mensagens(?:\s+n[ãa]o\s+lidas?)?', 'det_listar_mensagens'),
+            (r'(?:abr[ae]|acess[ae]|cliqu[ae])\s+(?:na?\s+)?(?:primeira\s+)?mensagem(?:\s+n[ãa]o\s+lida)?', 'det_abrir_primeira_mensagem'),
+
             # Navegação
             (r'(?:abr[ae]|acess[ae]|v[áa] para|navegue? para|entre no?)\s+(.+)', 'navigate'),
             (r'(?:pesquis[ae]|busqu[ae]|procur[ae])\s+(?:por\s+)?(.+)', 'search'),
@@ -118,5 +126,12 @@ class CommandProcessor:
             'scroll_top': "Indo para o topo da página",
             'scroll_bottom': "Indo para o final da página",
             'info': "Obtendo informações da página",
+            # DET
+            'det_acessar': "Acessando portal DET",
+            'det_trocar_perfil': f"Trocando perfil de empresa{': ' + param if param else ''}",
+            'det_verificar_mensagens': "Verificando mensagens não lidas",
+            'det_acessar_mensagens': "Acessando área de mensagens",
+            'det_listar_mensagens': "Listando mensagens não lidas",
+            'det_abrir_primeira_mensagem': "Abrindo primeira mensagem não lida",
         }
         return descriptions.get(action, f"Executando: {action}")

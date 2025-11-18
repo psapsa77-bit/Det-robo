@@ -4,10 +4,12 @@ Robô Simples - Aplicação Flask para controlar o navegador
 from flask import Flask, render_template, request, jsonify
 from browser_controller import BrowserController
 from command_processor import CommandProcessor
+from det_automation import DETAutomation
 
 app = Flask(__name__)
 browser = BrowserController()
 command_processor = CommandProcessor()
+det = DETAutomation(browser)
 
 
 @app.route('/')
@@ -203,6 +205,34 @@ def execute_action(action, param):
                 'success': True,
                 'message': f"Título: {status['title']}\nURL: {status['url']}"
             }
+
+        # Ações DET
+        elif action == 'det_acessar':
+            return det.acessar_det()
+
+        elif action == 'det_trocar_perfil':
+            # Se param contém nome ou CNPJ
+            if param:
+                # Verifica se parece com CNPJ (números)
+                if param.replace('.', '').replace('/', '').replace('-', '').isdigit():
+                    return det.trocar_perfil_empresa(cnpj=param)
+                else:
+                    return det.trocar_perfil_empresa(nome_empresa=param)
+            else:
+                # Sem parâmetro, só abre o seletor
+                return det.trocar_perfil_empresa()
+
+        elif action == 'det_verificar_mensagens':
+            return det.verificar_mensagens_nao_lidas()
+
+        elif action == 'det_acessar_mensagens':
+            return det.acessar_mensagens()
+
+        elif action == 'det_listar_mensagens':
+            return det.listar_mensagens_nao_lidas()
+
+        elif action == 'det_abrir_primeira_mensagem':
+            return det.clicar_primeira_mensagem_nao_lida()
 
         else:
             return {'success': False, 'message': f'Ação não implementada: {action}'}
