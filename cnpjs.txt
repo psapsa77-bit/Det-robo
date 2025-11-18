@@ -1,0 +1,19 @@
+# Lista de CNPJs para Processamento
+# ===================================
+#
+# Instruções:
+# - Coloque um CNPJ por linha
+# - Pode usar com ou sem formatação
+# - Linhas começando com # são ignoradas
+# - Linhas vazias são ignoradas
+#
+# Exemplos:
+# 12.345.678/0001-90
+# 98765432000100
+# 11.222.333/0001-44
+#
+# ===================================
+
+# Adicione seus CNPJs abaixo (um por linha):
+
+

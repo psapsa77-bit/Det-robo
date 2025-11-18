@@ -231,3 +231,381 @@ class DETReporter:
 </html>
         """
         return html
+
+    def generate_cnpj_report(self, data: Dict[str, Any]) -> Path:
+        """
+        Gera relatório HTML consolidado de processamento de CNPJs
+
+        Args:
+            data: Dados do processamento com stats e results
+
+        Returns:
+            Path do arquivo gerado
+        """
+        try:
+            self.logger.info("Gerando relatório consolidado de CNPJs...")
+
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f'relatorio_cnpjs_{timestamp}.html'
+            filepath = self.config.EXPORTS_DIR / filename
+
+            stats = data.get('stats', {})
+            results = data.get('results', [])
+
+            # Calcula tempo total
+            tempo_total = 0
+            if stats.get('tempo_inicio') and stats.get('tempo_fim'):
+                tempo_inicio = stats['tempo_inicio']
+                tempo_fim = stats['tempo_fim']
+                if isinstance(tempo_inicio, str):
+                    tempo_inicio = datetime.fromisoformat(tempo_inicio)
+                if isinstance(tempo_fim, str):
+                    tempo_fim = datetime.fromisoformat(tempo_fim)
+                tempo_total = (tempo_fim - tempo_inicio).total_seconds()
+
+            html = self._build_cnpj_report_html(stats, results, tempo_total)
+
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(html)
+
+            self.logger.info(f"Relatório consolidado gerado: {filepath}")
+            return filepath
+
+        except Exception as e:
+            self.logger.error(f"Erro ao gerar relatório de CNPJs: {str(e)}")
+            raise
+
+    def _build_cnpj_report_html(self, stats: Dict[str, Any], results: List[Dict[str, Any]], tempo_total: float) -> str:
+        """
+        Constrói HTML do relatório de CNPJs
+
+        Args:
+            stats: Estatísticas do processamento
+            results: Resultados por CNPJ
+            tempo_total: Tempo total em segundos
+
+        Returns:
+            HTML completo
+        """
+        # Filtra CNPJs com mensagens
+        cnpjs_com_mensagens = [r for r in results if r.get('quantidade_mensagens', 0) > 0]
+        cnpjs_sem_mensagens = [r for r in results if r.get('quantidade_mensagens', 0) == 0 and r.get('sucesso')]
+        cnpjs_com_erro = [r for r in results if not r.get('sucesso')]
+
+        # Conta total de mensagens
+        total_msgs = sum(r.get('quantidade_mensagens', 0) for r in results)
+
+        html = f"""
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório DET - Processamento de CNPJs</title>
+    <style>
+        body {{
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }}
+        .container {{
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }}
+        .header .subtitle {{
+            margin-top: 10px;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }}
+        .stats-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: #f8fafc;
+        }}
+        .stat-card {{
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-top: 4px solid #3b82f6;
+        }}
+        .stat-card.success {{
+            border-top-color: #10b981;
+        }}
+        .stat-card.warning {{
+            border-top-color: #f59e0b;
+        }}
+        .stat-card.error {{
+            border-top-color: #ef4444;
+        }}
+        .stat-value {{
+            font-size: 3em;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin: 10px 0;
+        }}
+        .stat-label {{
+            color: #64748b;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        .content {{
+            padding: 40px;
+        }}
+        .section {{
+            margin-bottom: 50px;
+        }}
+        .section h2 {{
+            color: #1e3a8a;
+            font-size: 1.8em;
+            border-left: 5px solid #3b82f6;
+            padding-left: 15px;
+            margin-bottom: 25px;
+        }}
+        .cnpj-card {{
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }}
+        .cnpj-card:hover {{
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }}
+        .cnpj-card.has-messages {{
+            border-left: 5px solid #10b981;
+            background: #f0fdf4;
+        }}
+        .cnpj-card.no-messages {{
+            border-left: 5px solid #94a3b8;
+            background: #f8fafc;
+        }}
+        .cnpj-card.error {{
+            border-left: 5px solid #ef4444;
+            background: #fef2f2;
+        }}
+        .cnpj-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }}
+        .cnpj-number {{
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #1e3a8a;
+        }}
+        .badge {{
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }}
+        .badge.success {{
+            background: #d1fae5;
+            color: #065f46;
+        }}
+        .badge.info {{
+            background: #dbeafe;
+            color: #1e40af;
+        }}
+        .badge.error {{
+            background: #fee2e2;
+            color: #991b1b;
+        }}
+        .messages-list {{
+            margin-top: 15px;
+            padding-left: 20px;
+        }}
+        .message-item {{
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid #3b82f6;
+        }}
+        .message-subject {{
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+        }}
+        .message-meta {{
+            font-size: 0.85em;
+            color: #64748b;
+        }}
+        .footer {{
+            background: #1e293b;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }}
+        .no-messages-text {{
+            color: #64748b;
+            font-style: italic;
+        }}
+        .error-text {{
+            color: #dc2626;
+            font-size: 0.9em;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ DET Robot - Relatório de Processamento</h1>
+            <div class="subtitle">
+                Análise de Mensagens Não Lidas por CNPJ<br>
+                Gerado em {datetime.now().strftime('%d/%m/%Y às %H:%M:%S')}
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total de CNPJs</div>
+                <div class="stat-value">{stats.get('total_cnpjs', 0)}</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-label">Com Mensagens</div>
+                <div class="stat-value">{stats.get('com_mensagens', 0)}</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-label">Total Mensagens</div>
+                <div class="stat-value">{total_msgs}</div>
+            </div>
+            <div class="stat-card error">
+                <div class="stat-label">Erros</div>
+                <div class="stat-value">{stats.get('erros', 0)}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Tempo Total</div>
+                <div class="stat-value">{int(tempo_total)}s</div>
+            </div>
+        </div>
+
+        <div class="content">
+"""
+
+        # Seção: CNPJs com mensagens
+        if cnpjs_com_mensagens:
+            html += f"""
+            <div class="section">
+                <h2>📧 CNPJs com Mensagens Não Lidas ({len(cnpjs_com_mensagens)})</h2>
+"""
+            for resultado in cnpjs_com_mensagens:
+                html += f"""
+                <div class="cnpj-card has-messages">
+                    <div class="cnpj-header">
+                        <div class="cnpj-number">{resultado['cnpj']}</div>
+                        <div class="badge success">
+                            {resultado['quantidade_mensagens']} mensagem(ns)
+                        </div>
+                    </div>
+"""
+                if resultado.get('mensagens'):
+                    html += """
+                    <div class="messages-list">
+"""
+                    for msg in resultado['mensagens']:
+                        # Verifica se msg é dict ou string
+                        if isinstance(msg, dict):
+                            subject = msg.get('subject', 'Sem assunto')
+                            sender = msg.get('sender', 'Remetente desconhecido')
+                            date = msg.get('date', '')
+                            html += f"""
+                        <div class="message-item">
+                            <div class="message-subject">{subject}</div>
+                            <div class="message-meta">De: {sender} | {date}</div>
+                        </div>
+"""
+                        else:
+                            html += f"""
+                        <div class="message-item">
+                            <div class="message-subject">{msg}</div>
+                        </div>
+"""
+                    html += """
+                    </div>
+"""
+                html += """
+                </div>
+"""
+            html += """
+            </div>
+"""
+
+        # Seção: CNPJs sem mensagens
+        if cnpjs_sem_mensagens:
+            html += f"""
+            <div class="section">
+                <h2>✓ CNPJs sem Mensagens ({len(cnpjs_sem_mensagens)})</h2>
+"""
+            for resultado in cnpjs_sem_mensagens:
+                html += f"""
+                <div class="cnpj-card no-messages">
+                    <div class="cnpj-header">
+                        <div class="cnpj-number">{resultado['cnpj']}</div>
+                        <div class="badge info">Sem mensagens</div>
+                    </div>
+                    <div class="no-messages-text">Nenhuma mensagem não lida encontrada</div>
+                </div>
+"""
+            html += """
+            </div>
+"""
+
+        # Seção: CNPJs com erro
+        if cnpjs_com_erro:
+            html += f"""
+            <div class="section">
+                <h2>⚠️ CNPJs com Erros ({len(cnpjs_com_erro)})</h2>
+"""
+            for resultado in cnpjs_com_erro:
+                html += f"""
+                <div class="cnpj-card error">
+                    <div class="cnpj-header">
+                        <div class="cnpj-number">{resultado['cnpj']}</div>
+                        <div class="badge error">Erro</div>
+                    </div>
+                    <div class="error-text">❌ {resultado.get('erro', 'Erro desconhecido')}</div>
+                </div>
+"""
+            html += """
+            </div>
+"""
+
+        html += f"""
+        </div>
+
+        <div class="footer">
+            <p><strong>DET Robot v2.0</strong> - Automação Profissional</p>
+            <p>Relatório gerado automaticamente em {datetime.now().strftime('%d/%m/%Y às %H:%M:%S')}</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+        return html
+

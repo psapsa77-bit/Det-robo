@@ -6,7 +6,18 @@ Sistema profissional de automação para o **portal DET (Domicílio Eletrônico 
 
 ## 🎯 Descrição
 
-DET Robot é uma ferramenta de automação focada exclusivamente em facilitar o acesso e gerenciamento do **Domicílio Eletrônico Trabalhista**. Com uma interface intuitiva e comandos em português, você pode:
+DET Robot é uma ferramenta de automação focada exclusivamente em facilitar o acesso e gerenciamento do **Domicílio Eletrônico Trabalhista**.
+
+### ⭐ Funcionalidade Principal: Processamento Automatizado de CNPJs
+
+O DET Robot foi desenvolvido para automatizar completamente o processo de:
+
+1. **📋 Recolhimento de CNPJs** - Lê lista de CNPJs de arquivo
+2. **🔄 Navegação Automática** - Acessa DET e troca perfis automaticamente
+3. **📧 Coleta de Mensagens** - Verifica mensagens não lidas para cada CNPJ
+4. **📊 Relatório Consolidado** - Gera relatório HTML profissional com todos os resultados
+
+### Outras Funcionalidades:
 
 - ⚡ **Acessar o portal DET** automaticamente
 - 👤 **Trocar perfis de empresas** rapidamente (por nome ou CNPJ)
@@ -55,7 +66,43 @@ Antes de começar, você precisa ter instalado:
 
 ## 🚀 Como Usar
 
-### 1. Fluxo Básico
+### ⭐ MODO RECOMENDADO: Processamento Automatizado de CNPJs
+
+**Este é o fluxo principal para o qual o robô foi otimizado:**
+
+#### Windows:
+```batch
+# 1. Edite o arquivo cnpjs.txt e adicione seus CNPJs
+# 2. Execute:
+PROCESSAR.bat
+```
+
+#### Linux/Mac:
+```bash
+# 1. Edite o arquivo cnpjs.txt e adicione seus CNPJs
+# 2. Execute:
+bash PROCESSAR.sh
+```
+
+**O que acontece:**
+1. 📋 Sistema lê todos os CNPJs do arquivo `cnpjs.txt`
+2. 🌐 Abre o navegador e acessa o portal DET
+3. ⏱️ Aguarda 30 segundos para você fazer login manualmente
+4. 🔄 Para cada CNPJ:
+   - Troca o perfil automaticamente
+   - Acessa área de mensagens
+   - Coleta mensagens não lidas
+5. 📊 Gera relatório consolidado em HTML na pasta `exports/`
+
+**Resultado:** Relatório profissional mostrando:
+- CNPJs com mensagens (com detalhes de cada mensagem)
+- CNPJs sem mensagens
+- CNPJs com erro
+- Estatísticas completas
+
+---
+
+### Modo Alternativo: Interface Web Manual
 
 1. **Execute `ABRIR.bat` (Windows) ou `bash ABRIR.sh` (Linux/Mac)**
 2. **Clique em "Iniciar Sistema"** (ou digite: "inicie o navegador")
@@ -139,42 +186,43 @@ Exemplos clicáveis estão disponíveis para facilitar o uso.
 ```
 Det-robo/
 │
-├── INSTALAR_WINDOWS.bat       # Instalador completo Windows
-├── INSTALAR_LINUX.sh          # Instalador completo Linux/Mac
-├── INSTALAR_SIMPLES.bat       # Instalador rápido Windows
-├── INSTALAR_SIMPLES.sh        # Instalador rápido Linux/Mac
-├── ABRIR.bat                  # Executar no Windows
-├── ABRIR.sh                   # Executar no Linux/Mac
-├── VERIFICAR.bat              # Testar instalação Windows
-├── VERIFICAR.sh               # Testar instalação Linux/Mac
+├── 📋 cnpjs.txt                      # ⭐ ARQUIVO PRINCIPAL - Lista de CNPJs para processar
 │
-├── app.py                     # Servidor Flask + API REST
-├── requirements.txt           # Dependências Python
+├── ⚡ PROCESSAR.bat / .sh            # ⭐ SCRIPT PRINCIPAL - Processa todos os CNPJs
+├── PROCESSAR_CNPJS.py               # Script Python standalone
 │
-├── det_robot/                 # Pacote modular principal
-│   ├── __init__.py           # Exports do pacote
-│   ├── config.py             # Configurações centralizadas
-│   ├── automation.py         # Automação DET com context manager
-│   ├── extractor.py          # Extração de dados estruturados
-│   └── reporter.py           # Geração de relatórios HTML/JSON
+├── INSTALAR_WINDOWS.bat             # Instalador completo Windows
+├── INSTALAR_LINUX.sh                # Instalador completo Linux/Mac
+├── INSTALAR_SIMPLES.bat             # Instalador rápido Windows
+├── INSTALAR_SIMPLES.sh              # Instalador rápido Linux/Mac
+├── ABRIR.bat / .sh                  # Interface web manual
+├── VERIFICAR.bat / .sh              # Teste de instalação
 │
-├── browser_controller.py      # Controle Selenium avançado (legado)
-├── det_automation.py          # Automação DET (legado)
-├── command_processor.py       # Processamento de linguagem natural
+├── det_robot/                       # 📦 Pacote modular principal
+│   ├── config.py                   # Configurações centralizadas
+│   ├── automation.py               # Automação DET (navegação, login)
+│   ├── extractor.py                # Extração de mensagens estruturadas
+│   ├── reporter.py                 # Geração de relatórios HTML
+│   └── processor.py                # ⭐ Processador de múltiplos CNPJs
 │
-├── templates/
-│   └── index.html            # Interface web profissional
+├── app.py                           # Servidor Flask (modo web manual)
+├── requirements.txt                 # Dependências Python
 │
+├── browser_controller.py            # Controle Selenium (legado)
+├── det_automation.py                # Automação DET (legado)
+├── command_processor.py             # NLP em português (legado)
+│
+├── templates/                       # Interface web
+│   └── index.html
 ├── static/
-│   ├── style.css             # Design moderno e responsivo
-│   └── script.js             # Lógica da interface
-│
+│   ├── style.css
+│   └── script.js
 ├── docs/
-│   └── COMO_USAR.md          # Guia completo em português
+│   └── COMO_USAR.md                # Guia completo
 │
-├── exports/                   # Relatórios gerados (HTML/JSON)
-├── logs/                      # Logs do sistema
-└── screenshots/               # Screenshots com timestamp
+├── 📊 exports/                      # ⭐ RELATÓRIOS GERADOS (HTML)
+├── logs/                            # Logs do sistema
+└── screenshots/                     # Screenshots automáticos
 ```
 
 ---
