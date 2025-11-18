@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robô Simples - Controle de Navegador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Robô Simples</h1>
+            <p>Controle seu navegador de forma intuitiva</p>
+        </header>
+
+        <div class="status-panel" id="statusPanel">
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot offline"></span>
+                <span id="statusText">Navegador Desligado</span>
+            </div>
+            <div class="current-page" id="currentPage">
+                <strong>Página:</strong> <span id="pageInfo">Nenhuma</span>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <section class="control-section">
+                <h2>Controle do Navegador</h2>
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="startBrowser()">
+                        ▶️ Iniciar Navegador
+                    </button>
+                    <button class="btn btn-danger" onclick="stopBrowser()">
+                        ⏹️ Fechar Navegador
+                    </button>
+                    <button class="btn btn-info" onclick="updateStatus()">
+                        🔄 Atualizar Status
+                    </button>
+                </div>
+            </section>
+
+            <section class="control-section">
+                <h2>Navegação</h2>
+                <div class="navigation-controls">
+                    <div class="url-input-group">
+                        <input
+                            type="text"
+                            id="urlInput"
+                            placeholder="Digite a URL (ex: google.com)"
+                            onkeypress="handleUrlKeypress(event)"
+                        >
+                        <button class="btn btn-primary" onclick="navigateToUrl()">
+                            🌐 Ir
+                        </button>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="goBack()">
+                            ⬅️ Voltar
+                        </button>
+                        <button class="btn btn-secondary" onclick="goForward()">
+                            ➡️ Avançar
+                        </button>
+                        <button class="btn btn-secondary" onclick="refresh()">
+                            🔄 Atualizar
+                        </button>
+                        <button class="btn btn-warning" onclick="takeScreenshot()">
+                            📸 Screenshot
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="control-section">
+                <h2>Atalhos Rápidos</h2>
+                <div class="button-group shortcuts">
+                    <button class="btn btn-outline" onclick="navigateTo('google.com')">
+                        Google
+                    </button>
+                    <button class="btn btn-outline" onclick="navigateTo('youtube.com')">
+                        YouTube
+                    </button>
+                    <button class="btn btn-outline" onclick="navigateTo('github.com')">
+                        GitHub
+                    </button>
+                    <button class="btn btn-outline" onclick="navigateTo('wikipedia.org')">
+                        Wikipedia
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <div class="messages" id="messages"></div>
+
+        <footer>
+            <p>Desenvolvido com Flask e Selenium</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
