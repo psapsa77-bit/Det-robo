@@ -3,128 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robô Simples - Controle de Navegador</title>
+    <title>DET Robot - Automação Domicílio Eletrônico Trabalhista</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🤖 Robô Simples</h1>
-            <p>Controle seu navegador de forma intuitiva</p>
+            <div class="header-content">
+                <div class="logo">
+                    <h1>⚡ DET Robot</h1>
+                    <p class="subtitle">Automação para Domicílio Eletrônico Trabalhista</p>
+                </div>
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="status-dot offline"></span>
+                    <span id="statusText">Sistema Desligado</span>
+                </div>
+            </div>
         </header>
 
-        <div class="status-panel" id="statusPanel">
-            <div class="status-indicator" id="statusIndicator">
-                <span class="status-dot offline"></span>
-                <span id="statusText">Navegador Desligado</span>
-            </div>
-            <div class="current-page" id="currentPage">
-                <strong>Página:</strong> <span id="pageInfo">Nenhuma</span>
-            </div>
-        </div>
+        <div class="main-content">
+            <!-- Painel de Início Rápido -->
+            <section class="quick-start">
+                <h2>🚀 Início Rápido</h2>
+                <div class="quick-actions">
+                    <button class="action-card" onclick="quickAction('start')">
+                        <div class="card-icon">▶️</div>
+                        <div class="card-title">Iniciar Sistema</div>
+                        <div class="card-desc">Ativa o navegador automatizado</div>
+                    </button>
+                    <button class="action-card" onclick="quickAction('det')">
+                        <div class="card-icon">🏢</div>
+                        <div class="card-title">Acessar DET</div>
+                        <div class="card-desc">Abre o portal DET</div>
+                    </button>
+                    <button class="action-card" onclick="quickAction('messages')">
+                        <div class="card-icon">📧</div>
+                        <div class="card-title">Verificar Mensagens</div>
+                        <div class="card-desc">Checa mensagens não lidas</div>
+                    </button>
+                </div>
+            </section>
 
-        <div class="command-panel">
+            <!-- Campo de Comando -->
             <section class="command-section">
-                <h2>🎤 Comandos em Linguagem Natural</h2>
-                <p class="command-help">Digite o que você quer que o robô faça!</p>
-                <div class="command-input-group">
+                <h2>💬 Comandos Inteligentes</h2>
+                <p class="help-text">Digite sua solicitação em linguagem natural</p>
+
+                <div class="command-input-area">
                     <input
                         type="text"
                         id="commandInput"
-                        placeholder="Ex: abra google.com, pesquise python, tire um screenshot..."
+                        class="command-input"
+                        placeholder="Ex: trocar perfil, verificar mensagens, listar mensagens não lidas..."
                         onkeypress="handleCommandKeypress(event)"
+                        autofocus
                     >
-                    <button class="btn btn-magic" onclick="processCommand()">
-                        ✨ Executar
+                    <button class="btn-execute" onclick="processCommand()">
+                        <span class="btn-icon">⚡</span>
+                        Executar
                     </button>
                 </div>
-                <div class="command-examples">
-                    <span class="example-label">Geral:</span>
-                    <button class="example-btn" onclick="setCommand('abra youtube.com')">abra youtube.com</button>
-                    <button class="example-btn" onclick="setCommand('pesquise receitas de bolo')">pesquise receitas de bolo</button>
-                    <button class="example-btn" onclick="setCommand('tire um screenshot')">tire um screenshot</button>
-                </div>
-                <div class="command-examples det-examples">
-                    <span class="example-label">DET:</span>
-                    <button class="example-btn det-btn" onclick="setCommand('acesse o DET')">acesse o DET</button>
-                    <button class="example-btn det-btn" onclick="setCommand('trocar perfil')">trocar perfil</button>
-                    <button class="example-btn det-btn" onclick="setCommand('verificar mensagens')">verificar mensagens</button>
-                    <button class="example-btn det-btn" onclick="setCommand('listar mensagens')">listar mensagens</button>
-                </div>
-            </section>
-        </div>
 
-        <div class="control-panel">
-            <section class="control-section">
-                <h2>Controle do Navegador</h2>
-                <div class="button-group">
-                    <button class="btn btn-success" onclick="startBrowser()">
-                        ▶️ Iniciar Navegador
-                    </button>
-                    <button class="btn btn-danger" onclick="stopBrowser()">
-                        ⏹️ Fechar Navegador
-                    </button>
-                    <button class="btn btn-info" onclick="updateStatus()">
-                        🔄 Atualizar Status
-                    </button>
-                </div>
-            </section>
-
-            <section class="control-section">
-                <h2>Navegação</h2>
-                <div class="navigation-controls">
-                    <div class="url-input-group">
-                        <input
-                            type="text"
-                            id="urlInput"
-                            placeholder="Digite a URL (ex: google.com)"
-                            onkeypress="handleUrlKeypress(event)"
-                        >
-                        <button class="btn btn-primary" onclick="navigateToUrl()">
-                            🌐 Ir
+                <!-- Comandos Sugeridos -->
+                <div class="suggestions">
+                    <span class="suggestion-label">Comandos disponíveis:</span>
+                    <div class="suggestion-chips">
+                        <button class="chip" onclick="setCommand('acesse o DET')">
+                            🏢 Acessar DET
                         </button>
-                    </div>
-
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="goBack()">
-                            ⬅️ Voltar
+                        <button class="chip" onclick="setCommand('trocar perfil')">
+                            👤 Trocar Perfil
                         </button>
-                        <button class="btn btn-secondary" onclick="goForward()">
-                            ➡️ Avançar
+                        <button class="chip" onclick="setCommand('verificar mensagens')">
+                            📊 Verificar Mensagens
                         </button>
-                        <button class="btn btn-secondary" onclick="refresh()">
-                            🔄 Atualizar
+                        <button class="chip" onclick="setCommand('listar mensagens')">
+                            📋 Listar Mensagens
                         </button>
-                        <button class="btn btn-warning" onclick="takeScreenshot()">
+                        <button class="chip" onclick="setCommand('abrir primeira mensagem')">
+                            📬 Abrir Primeira
+                        </button>
+                        <button class="chip" onclick="setCommand('tire um screenshot')">
                             📸 Screenshot
                         </button>
                     </div>
                 </div>
             </section>
 
-            <section class="control-section">
-                <h2>Atalhos Rápidos</h2>
-                <div class="button-group shortcuts">
-                    <button class="btn btn-outline" onclick="navigateTo('google.com')">
-                        Google
-                    </button>
-                    <button class="btn btn-outline" onclick="navigateTo('youtube.com')">
-                        YouTube
-                    </button>
-                    <button class="btn btn-outline" onclick="navigateTo('github.com')">
-                        GitHub
-                    </button>
-                    <button class="btn btn-outline" onclick="navigateTo('wikipedia.org')">
-                        Wikipedia
-                    </button>
+            <!-- Informações da Página Atual -->
+            <section class="info-panel">
+                <div class="info-item">
+                    <span class="info-label">📄 Página Atual:</span>
+                    <span class="info-value" id="pageInfo">Nenhuma</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🔗 URL:</span>
+                    <span class="info-value small" id="urlInfo">-</span>
+                </div>
+            </section>
+
+            <!-- Log de Atividades -->
+            <section class="activity-log">
+                <h3>📜 Registro de Atividades</h3>
+                <div class="messages" id="messages">
+                    <div class="message info">
+                        <span class="message-icon">ℹ️</span>
+                        <span class="message-text">Sistema pronto. Execute comandos ou use os botões acima.</span>
+                    </div>
                 </div>
             </section>
         </div>
 
-        <div class="messages" id="messages"></div>
-
         <footer>
-            <p>Desenvolvido com Flask e Selenium</p>
+            <p>DET Robot v1.0 | Automação Profissional para Portal DET</p>
+            <p class="footer-note">Desenvolvido com Flask + Selenium</p>
         </footer>
     </div>
 

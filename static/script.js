@@ -107,50 +107,89 @@ async function updateStatus() {
     }
 }
 
+// Ações Rápidas
+async function quickAction(action) {
+    if (action === 'start') {
+        await startBrowser();
+    } else if (action === 'det') {
+        setCommand('acesse o DET');
+        await processCommand();
+    } else if (action === 'messages') {
+        setCommand('verificar mensagens');
+        await processCommand();
+    }
+}
+
 // Funções de interface
 function updateStatusDisplay(running, url, title) {
     const statusDot = document.querySelector('.status-dot');
     const statusText = document.getElementById('statusText');
     const pageInfo = document.getElementById('pageInfo');
+    const urlInfo = document.getElementById('urlInfo');
 
     if (running) {
         statusDot.classList.remove('offline');
         statusDot.classList.add('online');
-        statusText.textContent = 'Navegador Ativo';
+        statusText.textContent = 'Sistema Ativo';
         pageInfo.textContent = title || 'Carregando...';
 
-        if (url) {
-            pageInfo.title = url;
+        if (urlInfo && url) {
+            urlInfo.textContent = url;
         }
     } else {
         statusDot.classList.remove('online');
         statusDot.classList.add('offline');
-        statusText.textContent = 'Navegador Desligado';
+        statusText.textContent = 'Sistema Desligado';
         pageInfo.textContent = 'Nenhuma';
-        pageInfo.title = '';
+        if (urlInfo) {
+            urlInfo.textContent = '-';
+        }
     }
 }
 
 function showMessage(message, type) {
     const messagesDiv = document.getElementById('messages');
 
+    // Cria elemento de mensagem
     const messageEl = document.createElement('div');
     messageEl.className = `message ${type}`;
-    messageEl.textContent = message;
+
+    // Cria ícone
+    const iconEl = document.createElement('span');
+    iconEl.className = 'message-icon';
+
+    if (type === 'success') {
+        iconEl.textContent = '✅';
+    } else if (type === 'error') {
+        iconEl.textContent = '❌';
+    } else {
+        iconEl.textContent = 'ℹ️';
+    }
+
+    // Cria texto
+    const textEl = document.createElement('span');
+    textEl.className = 'message-text';
+    textEl.textContent = message;
+
+    messageEl.appendChild(iconEl);
+    messageEl.appendChild(textEl);
 
     messagesDiv.appendChild(messageEl);
 
-    // Remove mensagens antigas (mantém apenas as últimas 5)
+    // Remove mensagens antigas (mantém apenas as últimas 8)
     const messages = messagesDiv.querySelectorAll('.message');
-    if (messages.length > 5) {
+    if (messages.length > 8) {
         messages[0].remove();
     }
 
-    // Auto-remove após 5 segundos
+    // Scroll para última mensagem
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // Auto-remove após 10 segundos
     setTimeout(() => {
         messageEl.style.opacity = '0';
         setTimeout(() => messageEl.remove(), 300);
-    }, 5000);
+    }, 10000);
 }
 
 function handleUrlKeypress(event) {
