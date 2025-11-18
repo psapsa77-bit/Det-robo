@@ -1,15 +1,37 @@
 """
-Robô Simples - Aplicação Flask para controlar o navegador
+DET Robot - Aplicação Flask para automação DET
+Sistema modular profissional para automação do Domicílio Eletrônico Trabalhista
 """
 from flask import Flask, render_template, request, jsonify
 from browser_controller import BrowserController
 from command_processor import CommandProcessor
-from det_automation import DETAutomation
+
+# Nova estrutura modular
+from det_robot import DETConfig, DETAutomation, DETExtractor, DETReporter
 
 app = Flask(__name__)
+
+# Configuração e instâncias
+config = DETConfig()
 browser = BrowserController()
 command_processor = CommandProcessor()
-det = DETAutomation(browser)
+
+# Instância de automação DET (será recriada quando necessário)
+det_automation = None
+det_extractor = None
+det_reporter = None
+
+
+def get_det_automation():
+    """Obtém ou cria instância de automação DET"""
+    global det_automation, det_extractor, det_reporter
+
+    if det_automation is None:
+        det_automation = DETAutomation(config)
+        det_extractor = DETExtractor(det_automation, config)
+        det_reporter = DETReporter(config)
+
+    return det_automation
 
 
 @app.route('/')
@@ -206,33 +228,61 @@ def execute_action(action, param):
                 'message': f"Título: {status['title']}\nURL: {status['url']}"
             }
 
-        # Ações DET
+        # Ações DET - usando nova estrutura modular
         elif action == 'det_acessar':
-            return det.acessar_det()
+            det = get_det_automation()
+            return det.access_det()
 
         elif action == 'det_trocar_perfil':
+            det = get_det_automation()
             # Se param contém nome ou CNPJ
             if param:
                 # Verifica se parece com CNPJ (números)
                 if param.replace('.', '').replace('/', '').replace('-', '').isdigit():
-                    return det.trocar_perfil_empresa(cnpj=param)
+                    return det.switch_profile(cnpj=param)
                 else:
-                    return det.trocar_perfil_empresa(nome_empresa=param)
+                    return det.switch_profile(company_name=param)
             else:
                 # Sem parâmetro, só abre o seletor
-                return det.trocar_perfil_empresa()
+                return det.switch_profile()
 
         elif action == 'det_verificar_mensagens':
-            return det.verificar_mensagens_nao_lidas()
+            # Usa o extrator para verificar mensagens
+            det = get_det_automation()
+            if det_extractor:
+                result = det_extractor.extract_unread_messages()
+                if result['success']:
+                    return {
+                        'success': True,
+                        'message': f"Encontradas {result['count']} mensagens não lidas"
+                    }
+                return result
+            return {'success': False, 'message': 'Extrator não disponível'}
 
         elif action == 'det_acessar_mensagens':
-            return det.acessar_mensagens()
+            det = get_det_automation()
+            return det.access_messages()
 
         elif action == 'det_listar_mensagens':
-            return det.listar_mensagens_nao_lidas()
+            # Usa o extrator para listar mensagens
+            det = get_det_automation()
+            if det_extractor:
+                result = det_extractor.extract_unread_messages()
+                if result['success'] and result['count'] > 0:
+                    messages_text = '\n'.join([
+                        f"- {msg['subject']} ({msg['sender']})"
+                        for msg in result['messages'][:5]
+                    ])
+                    return {
+                        'success': True,
+                        'message': f"Mensagens não lidas:\n{messages_text}"
+                    }
+                return result
+            return {'success': False, 'message': 'Extrator não disponível'}
 
         elif action == 'det_abrir_primeira_mensagem':
-            return det.clicar_primeira_mensagem_nao_lida()
+            det = get_det_automation()
+            return det.click_first_unread_message()
 
         else:
             return {'success': False, 'message': f'Ação não implementada: {action}'}
@@ -241,5 +291,87 @@ def execute_action(action, param):
         return {'success': False, 'message': str(e)}
 
 
+@app.route('/api/det/extract/messages', methods=['POST'])
+def extract_messages():
+    """Extrai mensagens não lidas estruturadas"""
+    try:
+        det = get_det_automation()
+        if det_extractor:
+            result = det_extractor.extract_unread_messages()
+            return jsonify(result)
+        return jsonify({'success': False, 'message': 'Extrator não disponível'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Erro: {str(e)}'})
+
+
+@app.route('/api/det/extract/profiles', methods=['POST'])
+def extract_profiles():
+    """Extrai perfis/empresas disponíveis"""
+    try:
+        det = get_det_automation()
+        if det_extractor:
+            result = det_extractor.extract_available_profiles()
+            return jsonify(result)
+        return jsonify({'success': False, 'message': 'Extrator não disponível'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Erro: {str(e)}'})
+
+
+@app.route('/api/det/extract/dashboard', methods=['POST'])
+def extract_dashboard():
+    """Extrai dados do dashboard"""
+    try:
+        det = get_det_automation()
+        if det_extractor:
+            result = det_extractor.extract_dashboard_data()
+            return jsonify(result)
+        return jsonify({'success': False, 'message': 'Extrator não disponível'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Erro: {str(e)}'})
+
+
+@app.route('/api/det/report/generate', methods=['POST'])
+def generate_report():
+    """Gera relatório das mensagens"""
+    try:
+        data = request.get_json()
+        format_type = data.get('format', 'html')  # html ou json
+        title = data.get('title', 'Relatório DET')
+
+        det = get_det_automation()
+        if not det_extractor or not det_reporter:
+            return jsonify({'success': False, 'message': 'Serviços não disponíveis'})
+
+        # Extrai dados
+        messages_data = det_extractor.extract_unread_messages()
+
+        if not messages_data['success']:
+            return jsonify(messages_data)
+
+        # Gera relatório
+        if format_type == 'html':
+            filepath = det_reporter.generate_html_report(messages_data, title)
+        else:
+            filepath = det_reporter.export_json(messages_data)
+
+        return jsonify({
+            'success': True,
+            'message': f'Relatório gerado com sucesso!',
+            'filepath': str(filepath)
+        })
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Erro: {str(e)}'})
+
+
 if __name__ == '__main__':
+    print("\n" + "="*50)
+    print("  DET ROBOT - Sistema Iniciado")
+    print("="*50)
+    print(f"  Porta: 5000")
+    print(f"  URL: http://localhost:5000")
+    print(f"  Logs: {config.LOGS_DIR}")
+    print(f"  Exports: {config.EXPORTS_DIR}")
+    print("="*50 + "\n")
+
     app.run(debug=True, host='0.0.0.0', port=5000)
