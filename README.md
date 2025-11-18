@@ -56,14 +56,31 @@ Comandos específicos para automatizar o portal DET:
 - GitHub
 - Wikipedia
 
-## 📦 Requisitos
+## 📦 Pré-requisitos
 
-### Pré-requisitos
-- Python 3.7 ou superior
-- Google Chrome instalado no sistema
-- ChromeDriver (geralmente instalado automaticamente)
+Antes de começar, você precisa ter instalado:
+- **Python 3.7 ou superior** - [Download aqui](https://www.python.org/downloads/)
+- **Google Chrome** - [Download aqui](https://www.google.com/chrome/)
 
-## 🔧 Instalação
+## ⚡ Instalação e Execução RÁPIDA (2 Cliques!)
+
+### Windows
+
+1. **Duplo-clique em `install.bat`** - Instala tudo automaticamente
+2. **Duplo-clique em `run.bat`** - Inicia o robô e abre no navegador
+
+### Linux/Mac
+
+1. **Duplo-clique em `install.sh`** (ou execute `bash install.sh`) - Instala tudo
+2. **Duplo-clique em `run.sh`** (ou execute `bash run.sh`) - Inicia o robô
+
+**Pronto!** O navegador vai abrir automaticamente em http://localhost:5000
+
+---
+
+## 🔧 Instalação Manual (Opcional)
+
+Se preferir instalar manualmente:
 
 ### 1. Clone o repositório
 ```bash
@@ -71,42 +88,36 @@ git clone <seu-repositorio>
 cd Det-robo
 ```
 
-### 2. Crie um ambiente virtual (recomendado)
-```bash
-python -m venv venv
-```
-
-### 3. Ative o ambiente virtual
-
-**Linux/Mac:**
-```bash
-source venv/bin/activate
-```
+### 2. Execute o instalador automático
 
 **Windows:**
 ```bash
-venv\Scripts\activate
+install.bat
 ```
 
-### 4. Instale as dependências
+**Linux/Mac:**
 ```bash
-pip install -r requirements.txt
+bash install.sh
+```
+
+### 3. Execute o robô
+
+**Windows:**
+```bash
+run.bat
+```
+
+**Linux/Mac:**
+```bash
+bash run.sh
 ```
 
 ## 🎮 Como Usar
 
-### 1. Inicie o servidor
-```bash
-python app.py
-```
+Após executar o `run.bat` ou `run.sh`, o navegador abrirá automaticamente.
+Se não abrir, acesse manualmente: **http://localhost:5000**
 
-### 2. Acesse a interface
-Abra seu navegador e acesse:
-```
-http://localhost:5000
-```
-
-### 3. Use a interface
+### Guia de Uso
 
 #### Modo Recomendado: Comandos em Linguagem Natural 🎤
 1. **Iniciar**: Digite `"inicie o navegador"` e pressione Enter (ou clique em Executar)
