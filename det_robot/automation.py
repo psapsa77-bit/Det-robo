@@ -9,10 +9,12 @@ from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from webdriver_manager.chrome import ChromeDriverManager
 
 from det_robot.config import DETConfig
 
@@ -79,7 +81,9 @@ class DETAutomation:
             if self.config.HEADLESS:
                 chrome_options.add_argument('--headless')
 
-            self.driver = webdriver.Chrome(options=chrome_options)
+            # Usa webdriver-manager para obter o ChromeDriver correto automaticamente
+            service = Service(ChromeDriverManager().install())
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
             self.driver.set_page_load_timeout(self.config.PAGE_LOAD_TIMEOUT)
             self.is_running = True
 

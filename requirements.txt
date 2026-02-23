@@ -6,6 +6,9 @@ flask>=3.0.0
 # Automação de navegador
 selenium>=4.15.0
 
+# Gerenciador automático de ChromeDriver
+webdriver-manager>=4.0.0
+
 # Utilitários (instalados automaticamente como dependências)
 # - werkzeug (Flask)
 # - jinja2 (Flask)

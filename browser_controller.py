@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime
 import os
 import time
@@ -31,9 +32,10 @@ class BrowserController:
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--start-maximized')
 
-        # Tenta usar o Chrome instalado no sistema
+        # Tenta usar o Chrome instalado no sistema com webdriver-manager
         try:
-            self.driver = webdriver.Chrome(options=chrome_options)
+            service = Service(ChromeDriverManager().install())
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
             self.is_running = True
             self.driver.get('https://www.google.com')
         except Exception as e:
